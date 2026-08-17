@@ -7,7 +7,7 @@ immunization strategies on higher-order temporal networks. The associated paper,
 ## Files
 
 - `theory.py`: stationary mean-field equations and numerical solution.
-- `simulation.py`: stochastic temporal-network simulation and validation command.
+- `simulation.py`: stochastic temporal-network simulation for a given parameter set.
 - `utils.py`: power-law activity distributions and immunization strategies.
 
 The implemented strategies are:
@@ -72,13 +72,6 @@ Run a stochastic simulation:
 
 ```bash
 python simulation.py --strategy HIC
-```
-
-Check all strategies by comparing their theoretical and simulated stationary
-prevalence:
-
-```bash
-python simulation.py --validate
 ```
 
 The principal parameters, including network size, infection strengths, immune

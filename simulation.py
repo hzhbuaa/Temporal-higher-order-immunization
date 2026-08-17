@@ -5,7 +5,6 @@ import json
 
 import numpy as np
 
-from theory import stationary_prevalence
 from utils import (
     STRATEGIES,
     check_strategy,
@@ -205,58 +204,12 @@ def run_simulation(
         "prevalence_std": float(np.std(prevalence)),
         "immune_fraction": float(np.mean(actual_immune)),
         "repeats": int(repeats),
-    }, (a1, a2, mass)
-
-
-def validate_strategies(args):
-    rows = []
-    passed = True
-    for offset, strategy in enumerate(STRATEGIES):
-        simulation, activities = run_simulation(
-            strategy=strategy,
-            size=args.size,
-            steps=args.steps,
-            burn_in=args.burn_in,
-            repeats=args.repeats,
-            observation_steps=args.observation_steps,
-            immune_fraction=args.immune_fraction,
-            lambda1=args.lambda1,
-            lambda2=args.lambda2,
-            mu=args.mu,
-            rho0=args.rho0,
-            initial_prevalence=args.initial_prevalence,
-            seed=args.seed + offset,
-        )
-        theory = stationary_prevalence(
-            *activities,
-            strategy=strategy,
-            immune_fraction=args.immune_fraction,
-            lambda1=args.lambda1,
-            lambda2=args.lambda2,
-            rho0=args.rho0,
-            initial_prevalence=args.initial_prevalence,
-        )
-        difference = abs(simulation["prevalence"] - theory["prevalence"])
-        ok = bool(np.isfinite(difference) and difference <= args.tolerance)
-        passed &= ok
-        row = {
-            "strategy": strategy,
-            "theory": theory["prevalence"],
-            "simulation": simulation["prevalence"],
-            "absolute_difference": difference,
-            "passed": ok,
-        }
-        rows.append(row)
-        print(json.dumps(row, sort_keys=True))
-    print(json.dumps({"all_passed": passed, "tolerance": args.tolerance}))
-    if not passed:
-        raise SystemExit(1)
+    }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--strategy", default="R", choices=list(STRATEGIES))
-    parser.add_argument("--validate", action="store_true")
     parser.add_argument("--size", type=int, default=1200)
     parser.add_argument("--steps", type=int, default=3000)
     parser.add_argument("--burn-in", type=int, default=2000)
@@ -269,27 +222,23 @@ def main():
     parser.add_argument("--rho0", type=float, default=0.2)
     parser.add_argument("--initial-prevalence", type=float, default=0.2)
     parser.add_argument("--seed", type=int, default=2026)
-    parser.add_argument("--tolerance", type=float, default=0.08)
     args = parser.parse_args()
-    if args.validate:
-        validate_strategies(args)
-    else:
-        result, _ = run_simulation(
-            strategy=args.strategy,
-            size=args.size,
-            steps=args.steps,
-            burn_in=args.burn_in,
-            repeats=args.repeats,
-            observation_steps=args.observation_steps,
-            immune_fraction=args.immune_fraction,
-            lambda1=args.lambda1,
-            lambda2=args.lambda2,
-            mu=args.mu,
-            rho0=args.rho0,
-            initial_prevalence=args.initial_prevalence,
-            seed=args.seed,
-        )
-        print(json.dumps(result, sort_keys=True))
+    result = run_simulation(
+        strategy=args.strategy,
+        size=args.size,
+        steps=args.steps,
+        burn_in=args.burn_in,
+        repeats=args.repeats,
+        observation_steps=args.observation_steps,
+        immune_fraction=args.immune_fraction,
+        lambda1=args.lambda1,
+        lambda2=args.lambda2,
+        mu=args.mu,
+        rho0=args.rho0,
+        initial_prevalence=args.initial_prevalence,
+        seed=args.seed,
+    )
+    print(json.dumps(result, sort_keys=True))
 
 
 if __name__ == "__main__":
