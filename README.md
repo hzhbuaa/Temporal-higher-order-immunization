@@ -1,9 +1,8 @@
 # Immunization on Temporal Higher-Order Networks
 
-This repository contains the theory and stochastic simulation code used to study
-immunization strategies for SIS dynamics on higher-order activity-driven (HOAD)
-temporal networks. The associated paper, *Immunization on Temporal Higher-Order
-Networks*, is available at [arXiv:2607.10171](https://arxiv.org/abs/2607.10171).
+This repository contains the theory and stochastic simulation code used to study 
+immunization strategies on higher-order temporal networks. The associated paper, 
+*Immunization on Temporal Higher-Order Networks*, is available at [arXiv:2607.10171](https://arxiv.org/abs/2607.10171).
 
 ## Files
 
